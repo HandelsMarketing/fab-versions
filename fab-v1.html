@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Floating action button version 1</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<link rel="stylesheet" href="font-awesome-4.6.3/css/font-awesome.min.css"></style>
+</head>
+<body>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+		html,body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			width: 100%;
+
+		}
+
+		.info-container {
+			height: 100%;
+			width: 100%;
+		}
+		.info {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			text-align: center;
+			font-family: "Arial", sans-serif;
+		}
+		.info h1 {
+			margin: 0;
+		}
+		.info h2 {
+			margin: 0;
+			margin-top: .3em;
+			font-size: 1.2em;
+		}
+	</style>
+
+	<style type="text/css">
+
+		.cta .cta--onactive {
+			display: none;
+		}
+		.cta .cta--onfolded {
+			display: block;
+		}
+
+		.cta.cta--active .cta--onactive {
+			display: block;
+		}
+		.cta.cta--active .cta--onfolded {
+			display: none;
+		}
+
+
+		.cta__trigger {
+			position: fixed;
+			bottom: 1.5rem;
+			right: 1.5rem;
+			width: 3.5rem;
+			height: 3.5rem;
+			background: black;
+			color: white;
+			padding: 1.25rem;
+			border-radius: 50%;
+			font-size: 1.1em;
+			transition: transform .3s, bottom .4s;
+			cursor:pointer;
+
+			z-index: 10;
+		}
+
+		.cta__trigger.pulsing {
+			transform: scale(1.2); 
+		}
+		.cta__trigger:hover {
+			transform: scale(1.1);
+		}
+
+		.cta--active .cta__trigger {
+			bottom: calc( 100% - 5rem);
+		}
+
+		.cta__note {
+
+			display: none;
+			position: fixed;
+			bottom: 1.5rem;
+			right: 1.5rem;
+			padding-right: 4.25rem;
+			padding-top: 1rem;
+			padding-left: 1.5rem;
+			height: 3.5rem;
+			font-size: 1.3em;
+			text-transform: uppercase;
+			border: 1px black solid;
+
+
+			border-radius: 9999px;
+
+			z-index: 5;
+
+		}
+
+
+		.cta.hinting .cta__note {
+			display: block;
+		}
+		.cta.cta--active .cta__note {
+			display: none;
+		}
+
+
+		.cta__modal {
+			position: fixed;
+			left: 50%;
+			top: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			width: 40em;
+			max-width: 90%;
+			max-height: 90%;
+			border: 1px black solid;
+			background: white;
+
+		}
+		.cta__modal__content {
+			padding: 2rem;
+		}
+		.cta__modal__footer {
+			padding: .5rem 2rem;
+			background: gray;
+		}
+
+	</style>
+
+
+
+	<script>
+
+		var ActionButton = function(el) {
+			var self = this;
+
+			this.el = el;
+			this.trigger = el.find('.cta__trigger');
+			this.note = el.find('.cta__note');
+
+
+
+
+			this.enablePulsing = true;
+			this.pulse(this.trigger);
+
+
+			this.isActive = false;
+			this.trigger.on('click', function() {
+				self.triggerFold(self.el);
+			});
+
+			this.disablePule = false;
+
+
+			setTimeout(function() {
+				self.hint(self.el, self.note);
+			}, 2000);
+		
+		}
+
+		ActionButton.prototype.pulse = function(el) {
+			var self = this;
+			setInterval( function() {
+				if(self.enablePulsing) {
+					el.addClass('pulsing');
+					setTimeout(function() {
+						el.removeClass('pulsing')
+					}, 200);
+				}
+			}, 4000);
+		};
+
+		ActionButton.prototype.hint = function(el, note) {
+			var self = this;
+
+
+			note.html(this.generateText());
+
+			setInterval(function() {
+				note.html( self.generateText() );
+			},500)
+			el.addClass('hinting');
+		};
+
+		ActionButton.prototype.generateText = function() {
+			var variations = [
+				'Coffee or tea?',
+				'It´s a match!',
+				'Bacon ipsum?',
+				'Your place or mine?',
+				'Quick sales everybody',
+				'hajhaj'
+			];
+			var text = variations[ Math.round(Math.random() * variations.length) ];
+
+			return text;	
+		};
+
+
+		ActionButton.prototype.triggerFold = function(el) {
+			this.enablePulsing = !this.enablePulsing;
+			el.toggleClass('cta--active');
+		};
+
+
+
+
+
+		$(document).ready(function() {
+
+			new ActionButton( $(".cta") );
+
+		});
+
+
+	</script>
+
+
+
+
+	<div class="info-container">
+		<div class="info">
+			<h1>Floating action button</h1>
+			<h2>version: 1</h2>
+		</div>
+	</div>
+	
+	<div class="cta">
+		<div class="cta__trigger">
+			<i class="fa fa-share cta--onfolded"></i>
+			<i class="fa fa-close cta--onactive"></i>
+		</div><div class="cta__note">
+			Coffee or tea?
+		</div><div class="cta__modal cta--onactive">
+			<div class="cta__modal__content">
+				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<input type="text">
+				<input type="submit">
+			</div>
+			<div class="cta__modal__footer">
+				<p>
+					Eller kontakta Daniel Vaziri på 123123123123 / daniel.vaziri@handelsmakreting.se
+				</p>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
